@@ -26,7 +26,7 @@ FROM php:7.4-apache
 RUN apt-get update \
  && apt-get install -y git libzip-dev zip libicu-dev \
  && docker-php-ext-configure intl \
- && docker-php-ext-install zip intl \
+ && docker-php-ext-install zip intl mysqli pdo pdo_mysql \
  && a2enmod rewrite \
  && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
  && mv /var/www/html /var/www/public \

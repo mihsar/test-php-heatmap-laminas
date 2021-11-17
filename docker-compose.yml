@@ -8,3 +8,18 @@ services:
      - "8080:80"
     volumes:
      - .:/var/www
+  db:
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: laminas-db
+      MYSQL_USER: laminas-db-user
+      MYSQL_PASSWORD: secret-password
+      MYSQL_ROOT_PASSWORD: r00t
+    image: mysql:8.0
+    ports:
+      - "33060:3306"
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:
