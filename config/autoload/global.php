@@ -6,7 +6,7 @@ return [
     'api-tools-content-negotiation' => [
         'selectors' => [],
     ],
-    'db'                            => [
+    'db' => [
         'adapters' => [
             'dummy' => [],
         ],
