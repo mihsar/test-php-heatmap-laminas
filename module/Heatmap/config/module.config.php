@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Heatmap;
 
+use Laminas\ApiTools\DbConnectedResourceAbstractFactory;
+
 return [
     'service_manager' => [
         'aliases' => [
         ],
         'factories' => [
-            \Heatmap\V1\Rest\Hit\HitResource::class => \Heatmap\V1\Rest\Hit\HitResourceFactory::class,
+            V1\Rest\Hit\HitResource::class => DbConnectedResourceAbstractFactory::class,
+            V1\Db\TableGateway\HitTableGateway::class => V1\Db\TableGateway\HitTableGatewayFactory::class,
         ],
     ],
     'router' => [
@@ -32,25 +35,18 @@ return [
     ],
     'api-tools-rest' => [
         'Heatmap\\V1\\Rest\\Hit\\Controller' => [
-            'listener' => \Heatmap\V1\Rest\Hit\HitResource::class,
+            'listener' => V1\Rest\Hit\HitResource::class,
+//            'listener' => \Heatmap\V1\Rest\Hit\HitResource::class,
             'route_name' => 'heatmap.rest.hit',
             'route_identifier_name' => 'hit_id',
             'collection_name' => 'hit',
-            'entity_http_methods' => [
-                0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods' => [
-                0 => 'GET',
-                1 => 'POST',
-            ],
+            'entity_http_methods' => ['GET', 'PATCH', 'PUT', 'DELETE',],
+            'collection_http_methods' => ['GET', 'POST',],
             'collection_query_whitelist' => [],
             'page_size' => 25,
             'page_size_param' => null,
-            'entity_class' => \Heatmap\V1\Rest\Hit\HitEntity::class,
-            'collection_class' => \Heatmap\V1\Rest\Hit\HitCollection::class,
+            'entity_class' => V1\Rest\Hit\HitEntity::class,
+            'collection_class' => V1\Rest\Hit\HitCollection::class,
             'service_name' => 'Hit',
         ],
     ],
@@ -74,13 +70,13 @@ return [
     ],
     'api-tools-hal' => [
         'metadata_map' => [
-            \Heatmap\V1\Rest\Hit\HitEntity::class => [
+            V1\Rest\Hit\HitEntity::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'heatmap.rest.hit',
                 'route_identifier_name' => 'hit_id',
-                'hydrator' => \Laminas\Hydrator\ObjectPropertyHydrator::class,
+                'hydrator' => \Laminas\Hydrator\ArraySerializableHydrator::class,
             ],
-            \Heatmap\V1\Rest\Hit\HitCollection::class => [
+            V1\Rest\Hit\HitCollection::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'heatmap.rest.hit',
                 'route_identifier_name' => 'hit_id',
@@ -147,15 +143,24 @@ return [
                 'field_type' => 'int',
             ],
             3 => [
-                'required' => true,
+                'required' => false,
                 'validators' => [
                     0 => [
-                        'name' => \Laminas\Validator\Digits::class,
-                        'options' => [],
+                        'name' => \Laminas\Validator\Date::class,
+                        'options' => [
+                            'format' => DATE_RFC3339,
+                        ],
                     ],
                 ],
-                'filters' => [],
-                'name' => 'timestamp',
+                'filters' => [
+                    0 => [
+                        'name' => \Laminas\Filter\DateTimeFormatter::class,
+                        'options' => [
+                            'format' => DATE_RFC3339
+                        ],
+                    ],
+                ],
+                'name' => 'accessed_at',
                 'description' => 'access timestamp',
             ],
         ],
@@ -165,7 +170,7 @@ return [
             'Heatmap\\V1\\Rest\\Hit\\Controller' => [
                 'collection' => [
                     'GET' => false,
-                    'POST' => false, //true,
+                    'POST' => false,
                     'PUT' => false,
                     'PATCH' => false,
                     'DELETE' => false,
@@ -173,10 +178,24 @@ return [
                 'entity' => [
                     'GET' => false,
                     'POST' => false,
-                    'PUT' => false, //true,
-                    'PATCH' => false, //true,
-                    'DELETE' => false, //true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
                 ],
+            ],
+        ],
+    ],
+    'api-tools' => [
+        'db-connected' => [
+            V1\Rest\Hit\HitResource::class => [
+                'adapter_name' => 'DbAdapter',
+                'table_name' => 'hits',
+                'hydrator_name' => \Laminas\Hydrator\ArraySerializableHydrator::class,
+                'controller_service_name' => 'Heatmap\\V1\\Rest\\Hit\\Controller',
+                'entity_identifier_name' => 'id',
+                'resource_class' => V1\Rest\Hit\HitResource::class,
+//                'table_service' => 'Heatmap\\V1\\Rest\\Hit\\HitResource\\Table',
+                'table_service' => V1\Db\TableGateway\HitTableGateway::class,
             ],
         ],
     ],

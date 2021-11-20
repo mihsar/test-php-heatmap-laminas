@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Heatmap\V1\Rest\Hit;
 
-class HitEntity
+use ArrayObject;
+
+class HitEntity extends ArrayObject
 {
     /** @var string */
     public $id;
 
-    /** @var string */
+    /** @var int */
     public $id_customer;
 
     /** @var string */
@@ -18,6 +20,6 @@ class HitEntity
     /** @var string */
     public $link_type;
 
-    /** @var int */
-    public $timestamp;
+    /** @var string */
+    public $accessed_at;
 }
