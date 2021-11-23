@@ -3,11 +3,15 @@
   <coverage processUncoveredFiles="true">
     <include>
       <directory suffix=".php">./module/Application/src</directory>
+      <directory suffix=".php">./module/Heatmap/src</directory>
     </include>
   </coverage>
   <testsuites>
     <testsuite name="api-tools-skeleton">
       <directory>./module/Application/test</directory>
+    </testsuite>
+    <testsuite name="heatmap">
+      <directory>./module/Heatmap/test</directory>
     </testsuite>
   </testsuites>
 </phpunit>
