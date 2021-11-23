@@ -21,5 +21,6 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/mysql
+      - ./data/mysql-dump:/docker-entrypoint-initdb.d:ro
 volumes:
   db-data:
